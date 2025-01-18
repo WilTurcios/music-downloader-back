@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "music-downloader-back"
+version = "0.1.0"
+description = ""
+authors = ["WilTurcios <wilberturcios123@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.13"
+flask = "^3.1.0"
+python-dotenv = "^1.0.1"
+requests = "^2.32.3"
+flask-cors = "^5.0.0"
+pytubefix = "^8.9.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
