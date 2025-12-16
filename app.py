@@ -1,4 +1,6 @@
-from flask import Flask, request, jsonify
+# -*- coding: utf-8 -*-
+from flask import Flask, request, jsonify, Response
+import json
 from flask_cors import CORS
 from pytubefix import YouTube
 import os
@@ -10,8 +12,16 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app, origins="*", methods=["GET", "POST"], allow_headers=["Content-Type"])
 
+# Ensure Flask's JSON responses don't escape non-ASCII characters
+app.config['JSON_AS_ASCII'] = False
+
 
 YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
+
+@app.route('/', methods=['GET'])
+def home():
+    payload = {"message": "This is the main endpoint"}
+    return Response(json.dumps(payload, ensure_ascii=False), mimetype='application/json; charset=utf-8'), 200
 
 @app.route('/search', methods=['GET'])
 def search():
@@ -61,15 +71,16 @@ def search():
         else:
             next_page_url = None
 
-        # Return the current page's songs and the next page URL
-        return jsonify({
+        # Return the current page's songs and the next page URL using UTF-8 JSON
+        payload = {
             "songs": all_songs,
             "nextPageUrl": next_page_url
-        })
+        }
+        return Response(json.dumps(payload, ensure_ascii=False), mimetype='application/json; charset=utf-8'), 200
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
+        payload = {"error": str(e)}
+        return Response(json.dumps(payload, ensure_ascii=False), mimetype='application/json; charset=utf-8'), 500
 
 @app.route('/download', methods=['POST'])
 def download():
@@ -97,7 +108,7 @@ def download():
         except Exception as e:
             results.append({"url": url, "status": "error", "error": str(e)})
     
-    return jsonify(results)
+    return Response(json.dumps(results, ensure_ascii=False), mimetype='application/json; charset=utf-8'), 200
 
 
 if __name__ == '__main__':
